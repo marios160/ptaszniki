@@ -1,0 +1,49 @@
+{# tabela z karmami #}
+{% extends 'base.html.twig' %}
+{% block title %}Lista karm{% endblock %}
+
+{% block body %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    <button onclick="location.href = '{{path('addKarma')}}'">Dodaj karmę</button>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nazwa</th>
+            <th>Opis</th>
+            <th>Waga</th>
+            <th>Ilość</th>
+            <th>Usuń</th>
+            <th>Edytuj</th>
+        </tr>
+        {% for item in karmy %}
+            <tr>
+                <td>{{item.id}}</td>
+                <td>{{item.nazwa}}</td>
+                <td>{{item.opis}}</td>
+                <td>{{item.waga}}</td>
+                <td>{{item.ilosc}}</td>
+                <td> <button onClick="
+                        (usun('{{item.nazwa}}')
+                                ? location.href = '{{path('deleteKarma', {'id':item.id})}}'
+                                : false)">
+                        Usuń
+                    </button>
+                </td>
+                <td> <button onclick="location.href = '{{path('editKarma', {'id':item.id})}}'">Edytuj</button></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <script>
+        function usun(nazwa) {
+            if (confirm("Czy na pewno chcesz usunąć karmę " + nazwa + "?"))
+                return true;
+            else
+                return false;
+        }
+        ;
+    </script>
+{% endblock %}

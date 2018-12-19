@@ -1,0 +1,127 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dodawanie masowego zdarzenia{% endblock %}
+
+{% block body %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+                <div class="flash-notice">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            <p> * - Pola wymagane</p>
+    <form action="{{path('addMultiZapiszZdarzenie')}}" method="POST">
+        <div class="zapiszEdycje">
+            <table>
+                <tr>             
+                    <th>{#<a href="{{path('showZdarzenia', {'field':'kodEan'})}}">#}Typ zdarzenia *{#</a>#}</th>
+                    <th>{#<a href="{{path('showZdarzenia', {'field':'nazwaLacinska'})}}">#}Pracownik *{#</a>#}</th>
+                    <th>{#<a href="{{path('showZdarzenia', {'field':'nazwaPolska'})}}">#}Ptasznik, Kod EAN od - do *{#</a>#}</th>
+                    <th>{#<a href="{{path('showZdarzenia', {'field':'uwagi'})}}">#}Data *{#</a>#}</th>
+                    <th>{#<a href="{{path('showZdarzenia', {'field':'magazyn'})}}">#}Opis{#</a>#}</th>
+                    <th id="thInfo">{#<a href="{{path('showZdarzenia', {'field':'magazyn'})}}">#}Info *{#</a>#}</th>   
+                </tr>
+
+                <tr>
+                    <td>
+                        <select name="zdarzenie[typZdarzenia]"   onChange="dodajPole(value)">
+                            <option value="" selected></option>
+                            {% for typ in typZdarzenia %}
+                                <option value="{{typ.id}}" >{{typ.nazwa}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="zdarzenie[pracownik]">
+                            <option value="" selected></option>
+                            {% for pra in pracownicy %}
+                                <option value="{{pra.id}}">{{pra.imie ~ ' ' ~ pra.nazwisko}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" name="zdarzenie[ptasznik1]" value="{{ptasznik1 is defined ? ptasznik1 : ''}}"/> -> 
+                        <input type="text" name="zdarzenie[ptasznik2]" value="{{ptasznik2 is defined ? ptasznik2 : ''}}"/>          
+                    </td>
+                    <td><input type="date" name="zdarzenie[data]" value="{{ "now"|date("Y-m-d") }}"/></td>
+                    <td><input type="text" name="zdarzenie[opis]" value=""/></td>
+                    <td id="tdInfo"></td>
+                </tr>
+
+            </table>
+
+
+            <button type="submit">Zapisz</button>
+        </div>
+    </form>
+                    
+    <script>
+        function dodajPole(typ) {
+            var thInfo = document.getElementById('thInfo');
+            var tdInfo = document.getElementById('tdInfo');
+            while (tdInfo.firstChild) {
+                tdInfo.removeChild(tdInfo.firstChild);
+            }
+            switch (typ) {
+                case '1': //karmienie
+                    thInfo.innerHTML = 'Karma';
+                    var tdSel = document.createElement("select")
+                    tdSel.setAttribute("name", "zdarzenie[info]");
+                    var selOpt = document.createElement("option")
+                    selOpt.setAttribute("value", "");
+                    selOpt.setAttribute("selected", "selected");
+                    tdSel.appendChild(selOpt);
+                    {% for karma in karmy %}
+                        var selOpt = document.createElement("option");
+                        selOpt.setAttribute("value", "{{karma.id}}");
+                        selOpt.innerHTML = "{{karma.nazwa}}";
+                        tdSel.appendChild(selOpt);
+                    {% endfor %}
+                    tdInfo.appendChild(tdSel);
+                    break;
+                case '2': //wylinka
+                    thInfo.innerHTML = 'Rozmiar';
+                    var tdInput = document.createElement("input");
+                    tdInput.setAttribute("type", "text",);
+                    tdInput.setAttribute("name", "zdarzenie[info]");
+                    tdInfo.appendChild(tdInput);
+                    break;
+                case '3': //zmiana magazynu
+                    thInfo.innerHTML = 'Magazyn';
+                    var tdSel = document.createElement("select")
+                    tdSel.setAttribute("name", "zdarzenie[info]");
+                    var selOpt = document.createElement("option")
+                    selOpt.setAttribute("value", "");
+                    selOpt.setAttribute("selected", "selected");
+                    tdSel.appendChild(selOpt);
+                    {% for mag in magazyny %}
+                        var selOpt = document.createElement("option");
+                        selOpt.setAttribute("value", "{{mag.id}}");
+                        selOpt.innerHTML = "{{mag.nazwa}}";
+                        tdSel.appendChild(selOpt);
+                    {% endfor %}
+                    tdInfo.appendChild(tdSel);
+                    break;
+                case '6': //zmiana magazynu
+                    thInfo.innerHTML = 'Terrarium';
+                    var tdSel = document.createElement("select")
+                    tdSel.setAttribute("name", "zdarzenie[info]");
+                    var selOpt = document.createElement("option")
+                    selOpt.setAttribute("value", "");
+                    selOpt.setAttribute("selected", "selected");
+                    tdSel.appendChild(selOpt);
+                    {% for ter in terraria %}
+                        var selOpt = document.createElement("option");
+                        selOpt.setAttribute("value", "{{ter.id}}");
+                        selOpt.innerHTML = "{{ter.nazwa}}";
+                        tdSel.appendChild(selOpt);
+                    {% endfor %}
+                    tdInfo.appendChild(tdSel);
+                    break;
+                default:
+                    thInfo.innerHTML = 'Info';
+            }
+
+        }
+        
+    </script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{# tabela z dostawami #}
+{% extends 'base.html.twig' %}
+{% block title %}Lista dostaw{% endblock %}
+
+{% block body %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    <button onclick="location.href = '{{path('addDostawa')}}'">Nowa dostawa</button>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Data</th>
+            <th>Numer faktury</th>
+            <th>Kod dostawy</th>
+            <th>Usuń</th>
+            <th>Edytuj</th>
+        </tr>
+        {% for item in dostawy %}
+            <tr>
+                <td>{{item.id}}</td>
+                <td>{{item.data|date('Y-m-d')}}</td>
+                <td>{{item.faktura}}</td>
+                <td>{{item.kod}}</td>
+                <td> <button onclick="location.href = '{{path('deleteDostawa', {'id':item.id})}}'">Usuń</button></td>
+                <td> <button onclick="location.href = '{{path('editDostawa', {'id':item.id})}}'">Edytuj</button></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

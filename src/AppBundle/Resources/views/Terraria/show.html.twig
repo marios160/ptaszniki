@@ -1,0 +1,49 @@
+{# tabela z terrariami #}
+{% extends 'base.html.twig' %}
+{% block title %}Lista terrariów{% endblock %}
+
+{% block body %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    <button onclick="location.href = '{{path('addTerrarium')}}'">Dodaj terrarium</button>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nazwa</th>
+            <th>Opis</th>
+            <th>Pojemność</th>
+            <th>Rozmiar</th>
+            <th>Usuń</th>
+            <th>Edytuj</th>
+        </tr>
+        {% for item in terraria %}
+            <tr>
+                <td>{{item.id}}</td>
+                <td>{{item.nazwa}}</td>
+                <td>{{item.opis}}</td>
+                <td>{{item.pojemnosc}}</td>
+                <td>{{item.rozmiar}}</td>
+                <td> <button onClick="
+                        (usun('{{item.nazwa}}')
+                                ? location.href = '{{path('deleteTerrarium', {'id':item.id})}}'
+                                : false)">
+                        Usuń
+                    </button>
+                </td>
+                <td> <button onclick="location.href = '{{path('editTerrarium', {'id':item.id})}}'">Edytuj</button></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <script>
+        function usun(nazwa) {
+            if (confirm("Czy na pewno chcesz usunąć terrarium " + nazwa + "?"))
+                return true;
+            else
+                return false;
+        }
+        ;
+    </script>
+{% endblock %}

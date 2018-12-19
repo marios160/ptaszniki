@@ -1,0 +1,12 @@
+{# Form #}
+{%- block form_row -%}
+  <div class="form_row">
+      <div class="col-25">
+         {{- form_label(form) -}}
+      </div>
+         {{- form_errors(form) -}}
+      <div class="col-75">
+         {{- form_widget(form) -}}
+      </div>
+  </div>
+ {% endblock form_row %}

@@ -1,0 +1,48 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Zdarzenia{% endblock %}
+
+{% block body %}
+    <form action="{{path('editZapiszZdarzenie')}}" method="POST">
+        <div class="zapiszEdycje">
+        <table>
+            <tr>
+
+                <th>{#<a href="{{path('showZdarzenia', {'field':'id',currentPage:thisPage})}}">#}ID{#</a>#}</th>
+                <th>{#<a href="{{path('showZdarzenia', {'field':'kodEan'})}}">#}Typ zdarzenia{#</a>#}</th>
+                <th>{#<a href="{{path('showZdarzenia', {'field':'nazwaLacinska'})}}">#}Pracownik{#</a>#}</th>
+                <th>{#<a href="{{path('showZdarzenia', {'field':'nazwaPolska'})}}">#}Ptasznik{#</a>#}</th>
+                <th>{#<a href="{{path('showZdarzenia', {'field':'uwagi'})}}">#}Data{#</a>#}</th>
+                <th>{#<a href="{{path('showZdarzenia', {'field':'kodDostawy'})}}">#}Opis{#</a>#}</th>
+            </tr>
+            {% for item in zdarzenia %}
+                <tr>
+                    <td>{{item.id}}<input type="hidden" name="zdarzeniaEdit[{{item.id}}][id]" value="{{item.id}}"/></td>
+                    <td>
+                        <select name="zdarzeniaEdit[{{item.id}}][typZdarzenia]">
+                            <option value="" selected></option>
+                            {% for typ in typZdarzenia %}
+                                <option value="{{typ.id}}" {{ typ.nazwa == item.typZdarzenia ? 'selected' : ''}} >{{typ.nazwa}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="zdarzeniaEdit[{{item.id}}][pracownik]">
+                                <option value="" selected></option>
+                            {% for pra in pracownicy %}
+                                <option value="{{pra.id}}" {{ (pra.imie ~ ' ' ~  pra.nazwisko) == item.pracownik ? 'selected' : ''}}>{{pra.imie ~ ' ' ~ pra.nazwisko}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input type="text" name="zdarzeniaEdit[{{item.id}}][ptasznik]" value="{{item.ptasznik}}"/></td>
+                    <td><input type="date" name="zdarzeniaEdit[{{item.id}}][data]" value="{{item.data|date('Y-m-d')}}"/></td>
+                    <td><input type="text" name="zdarzeniaEdit[{{item.id}}][opis]" value="{{item.opis}}"/></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        
+            <button type="submit">Zapisz</button>
+        </div>
+    </form>
+{% endblock %}

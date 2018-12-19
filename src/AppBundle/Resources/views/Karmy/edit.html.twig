@@ -1,0 +1,20 @@
+{# Edycja karm #}
+{% extends 'base.html.twig' %}
+{% form_theme form 'form/fields.html.twig' %}
+
+{% block title %}Edytuj dane karmy{% endblock %}
+
+{% block body %}
+    <h1>Edytuj dane karmy</h1>
+    <div class="formularz">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.nazwa) }}
+        {{ form_row(form.opis) }}
+        {{ form_row(form.waga) }}
+        {{ form_row(form.ilosc) }}
+        {{ form_row(form.zapisz) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

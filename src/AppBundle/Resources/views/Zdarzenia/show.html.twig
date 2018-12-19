@@ -1,0 +1,127 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Zdarzenia{% endblock %}
+
+{% block body %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    <div class="nawigacja">
+    {% if maxPages > 1 %}
+
+        <div class="paginating">
+            <label>Strona:</label>
+            <select name="strona" onChange="window.location = this.options[this.selectedIndex].value">
+                {% for i in 1..maxPages %}
+                    {%if i == thisPage %}
+                        <option value="{{path('showZdarzenia', {currentPage:i})}}" selected>{{ i }}</option>
+                    {% else %}
+                        <option value="{{path('showZdarzenia', {currentPage:i})}}">{{ i }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+    {% endif %}
+        <form method="POST">
+            <div class="szukaj">
+                <input type="text" name="find" value=""/> 
+                <button type="submit">Szukaj</button>
+            </div>
+        </form>
+        <form id="czynnosc" method="POST" action="{{path('czynnoscZdarzenie')}}">
+            <div class="combobox">
+                <select name="czynnosc">
+                    <option value="addMultiZdarzenie">Dodaj masowe zdarzenie</option>
+                    <option value="addZdarzenie">Dodaj zdarzenie</option>
+                    <option value="deleteZdarzenie">Usuń zaznaczone</option>
+                    {#<option value="editZdarzenie">Edytuj zaznaczone</option>#}
+                </select>
+                <button type="submit">Wykonaj</button>
+            </div>
+        </form>
+    </div>
+    <table>
+        <tr>
+            <th></th>
+            <th>{#<a href="{{path('showZdarzenia', {'field':'id',currentPage:thisPage})}}">#}ID{#</a>#}</th>
+            <th>{#<a href="{{path('showZdarzenia', {'field':'kodEan'})}}">#}Typ zdarzenia{#</a>#}</th>
+            <th>{#<a href="{{path('showZdarzenia', {'field':'nazwaLacinska'})}}">#}Pracownik{#</a>#}</th>
+            <th>{#<a href="{{path('showZdarzenia', {'field':'nazwaPolska'})}}">#}Ptasznik{#</a>#}</th>
+            <th>{#<a href="{{path('showZdarzenia', {'field':'uwagi'})}}">#}Data{#</a>#}</th>
+            <th>{#<a href="{{path('showZdarzenia', {'field':'magazyn'})}}">#}Opis{#</a>#}</th>
+            <th>{#<a href="{{path('showZdarzenia', {'field':'magazyn'})}}">#}Info{#</a>#}</th>
+        </tr>
+        {% for item in zdarzenia %}
+            <tr>
+                <td><input form="czynnosc" type="checkbox" class="chkbox" name="chck[]" value="{{item.id}}"/></td>
+                <td>{{item.id}}</td>
+                <td>{{item.typZdarzenia}}</td>
+                <td>{{item.pracownik}}</td>
+                <td>{{item.ptasznik}}</td>
+                <td>{{item.data|date('Y-m-d')}}</td>
+                <td>{{item.opis}}</td>
+                {% if item.magazyn != null %}
+                <td>{{item.magazyn}}</td>
+                {% elseif item.karma != null %}
+                <td>{{item.karma}}</td>
+                {% elseif item.rozmiar != null %}
+                <td>{{item.rozmiar}}</td>
+                {% elseif item.terrarium != null %}
+                <td>{{item.terrarium}}</td>
+                {% else %}
+                <td></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+
+{% if maxPages > 1 %}
+
+        <div class="paginating">
+             <label>Strona:</label>
+            <select name="strona" onChange="window.location = this.options[this.selectedIndex].value">
+                {% for i in 1..maxPages %}
+                    {%if i == thisPage %}
+                        <option value="{{path('showZdarzenia', {currentPage:i})}}" selected>{{ i }}</option>
+                    {% else %}
+                        <option value="{{path('showZdarzenia', {currentPage:i})}}">{{ i }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+    {% endif %}
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script>
+
+            $(document).ready(function () {
+                var $chkboxes = $('.chkbox');
+                var lastChecked = null;
+
+                $chkboxes.click(function (e) {
+                    if (!lastChecked) {
+                        lastChecked = this;
+                        return;
+                    }
+
+                    if (e.shiftKey) {
+                        var start = $chkboxes.index(this);
+                        var end = $chkboxes.index(lastChecked);
+
+                        $chkboxes.slice(Math.min(start, end), Math.max(start, end) + 1).prop('checked', lastChecked.checked);
+
+                    }
+
+                    lastChecked = this;
+                });
+            });</script>
+
+{% endblock %}

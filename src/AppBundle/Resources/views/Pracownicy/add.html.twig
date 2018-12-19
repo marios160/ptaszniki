@@ -1,0 +1,21 @@
+{# Dodawanie pracownikow #}
+{% extends 'base.html.twig' %}
+{% form_theme form 'form/fields.html.twig' %}
+
+{% block title %}Dodawanie pracownikow{% endblock %}
+
+{% block body %}
+    <h1>Dodaj nowego pracownika</h1>
+    <div class="formularz">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.nazwisko) }}
+        {{ form_row(form.imie) }}
+        {{ form_row(form.nrTelefonu) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.stanowisko) }}
+        {{ form_row(form.zapisz) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
