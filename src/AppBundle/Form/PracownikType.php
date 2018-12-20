@@ -7,6 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
+/**
+ * Description of PracownikType
+ *
+ * @author Mateusz Błaszczak
+ */
+
 class PracownikType extends AbstractType
 {
     /**

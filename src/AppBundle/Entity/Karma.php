@@ -6,6 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * Description of Karma
+ *
+ * @author Mateusz Błaszczak
+ */
+
+/**
  * Karma
  *
  * @ORM\Table(name="karmy")

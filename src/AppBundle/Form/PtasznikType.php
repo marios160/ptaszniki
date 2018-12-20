@@ -7,6 +7,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
+/**
+ * Description of PtasznikType
+ *
+ * @author Mateusz Błaszczak
+ */
+
+
 class PtasznikType extends AbstractType
 {
     /**

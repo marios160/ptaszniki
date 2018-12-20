@@ -3,14 +3,15 @@
 {% block title %}Ptaszniki{% endblock %}
 
 {% block body %}
+    <p> * - Pola wymagane</p>
     <form action="{{path('editZapiszPtasznik')}}" method="POST">
         <div class="zapiszEdycje">
         <table>
             <tr>
 
                 <th>{#<a href="{{path('showPtaszniki', {'field':'id',currentPage:thisPage})}}">#}ID{#</a>#}</th>
-                <th>{#<a href="{{path('showPtaszniki', {'field':'kodEan'})}}">#}Kod EAN{#</a>#}</th>
-                <th>{#<a href="{{path('showPtaszniki', {'field':'nazwaLacinska'})}}">#}Nazwa łacińska{#</a>#}</th>
+                <th>{#<a href="{{path('showPtaszniki', {'field':'kodEan'})}}">#}Kod EAN *{#</a>#}</th>
+                <th>{#<a href="{{path('showPtaszniki', {'field':'nazwaLacinska'})}}">#}Nazwa łacińska *#</a>#}</th>
                 <th>{#<a href="{{path('showPtaszniki', {'field':'nazwaPolska'})}}">#}Nazwa polska{#</a>#}</th>
                 <th>{#<a href="{{path('showPtaszniki', {'field':'uwagi'})}}">#}Uwagi{#</a>#}</th>
                 <th>{#<a href="{{path('showPtaszniki', {'field':'kodDostawy'})}}">#}Kod dostawy{#</a>#}</th>

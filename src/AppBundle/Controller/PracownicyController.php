@@ -8,7 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Form\PracownikType;
 use AppBundle\Entity\Pracownik;
-
+/**
+ * Description of PracownicyController
+ *
+ * @author Mateusz Błaszczak
+ */
 class PracownicyController extends Controller {
 
     /**

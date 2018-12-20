@@ -8,7 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Ptasznik;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
-
+/**
+ * Description of PtasznikiController
+ *
+ * @author Mateusz Błaszczak
+ */
 class PtasznikiController extends Controller {
 
     /**

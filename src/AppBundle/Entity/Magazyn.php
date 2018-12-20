@@ -5,6 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Description of Magazyn
+ *
+ * @author Mateusz Błaszczak
+ */
+
+/**
  * Magazyn
  *
  * @ORM\Table(name="magazyny")

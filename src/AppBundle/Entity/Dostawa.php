@@ -5,6 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Description of Dostawa
+ *
+ * @author Mateusz Błaszczak
+ */
+
+/**
  * Dostawa
  *
  * @ORM\Table(name="dostawa")

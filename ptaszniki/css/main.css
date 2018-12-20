@@ -5,6 +5,19 @@ body {
     text-align: center;
 }
 
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 98%;
+  background-color: black;
+  color: white;
+  font-size: small;
+  text-align: right;
+  padding: 10px;
+
+}
+
 p {
     text-align: left;
 }

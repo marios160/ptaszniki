@@ -5,6 +5,12 @@ namespace AppBundle\Repository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
+ * Description of PtasznikRepository
+ *
+ * @author Mateusz Błaszczak
+ */
+
+/**
  * PtasznikRepository
  */
 class PtasznikRepository extends \Doctrine\ORM\EntityRepository {

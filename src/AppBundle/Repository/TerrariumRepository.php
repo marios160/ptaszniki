@@ -2,6 +2,13 @@
 
 namespace AppBundle\Repository;
 
+
+/**
+ * Description of TerrariumRepository
+ *
+ * @author Mateusz Błaszczak
+ */
+
 /**
  * TerrariumRepository
  *

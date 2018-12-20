@@ -7,7 +7,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Zdarzenie;
 use Symfony\Component\Config\Definition\Exception\Exception;
-
+/**
+ * Description of ZdarzeniaController
+ *
+ * @author Mateusz Błaszczak
+ */
 class ZdarzeniaController extends Controller {
 
     /**

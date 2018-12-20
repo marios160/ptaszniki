@@ -5,7 +5,11 @@ namespace AppBundle\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-
+/**
+ * Description of DefaultController
+ *
+ * @author Mateusz Błaszczak
+ */
 class DefaultController extends Controller
 {
     /**

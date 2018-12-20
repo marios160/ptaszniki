@@ -3,6 +3,11 @@
 namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+/**
+ * Description of Pracownik
+ *
+ * @author Mateusz Błaszczak
+ */
 
 /**
   * @ORM\Entity
