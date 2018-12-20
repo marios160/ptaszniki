@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "@App/base.html.twig" %}
 
 {% block title %}Dodawanie masowego zdarzenia{% endblock %}
 
@@ -23,8 +23,8 @@
 
                 <tr>
                     <td>
-                        <select name="zdarzenie[typZdarzenia]"   onChange="dodajPole(value)">
-                            <option value="" selected></option>
+                        <select  name="zdarzenie[typZdarzenia]"  onload="dodajPole(value)">
+                            <option id="selTypZdarzenia" value="" selected></option>
                             {% for typ in typZdarzenia %}
                                 <option value="{{typ.id}}" >{{typ.nazwa}}</option>
                             {% endfor %}
@@ -48,10 +48,10 @@
 
             </table>
 
-
             <button type="submit">Zapisz</button>
         </div>
     </form>
+    
     <script>
         
         function dodajPole(typ) {
@@ -62,7 +62,7 @@
             }
             switch (typ) {
                 case '1': //karmienie
-                    thInfo.innerHTML = 'Karma';
+                    thInfo.innerHTML = 'Karma *';
                     var tdSel = document.createElement("select")
                     tdSel.setAttribute("name", "zdarzenie[info]");
                     var selOpt = document.createElement("option")
@@ -78,14 +78,14 @@
                     tdInfo.appendChild(tdSel);
                     break;
                 case '2': //wylinka
-                    thInfo.innerHTML = 'Rozmiar';
+                    thInfo.innerHTML = 'Rozmiar *';
                     var tdInput = document.createElement("input");
                     tdInput.setAttribute("type", "text",);
                     tdInput.setAttribute("name", "zdarzenie[info]");
                     tdInfo.appendChild(tdInput);
                     break;
                 case '3': //zmiana magazynu
-                    thInfo.innerHTML = 'Magazyn';
+                    thInfo.innerHTML = 'Magazyn *';
                     var tdSel = document.createElement("select")
                     tdSel.setAttribute("name", "zdarzenie[info]");
                     var selOpt = document.createElement("option")
@@ -101,7 +101,7 @@
                     tdInfo.appendChild(tdSel);
                     break;
                 case '6': //zmiana magazynu
-                    thInfo.innerHTML = 'Terrarium';
+                    thInfo.innerHTML = 'Terrarium *';
                     var tdSel = document.createElement("select")
                     tdSel.setAttribute("name", "zdarzenie[info]");
                     var selOpt = document.createElement("option")

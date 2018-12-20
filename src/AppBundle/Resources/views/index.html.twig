@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "@App/base.html.twig" %}
 {% block title %}Ptaszniki{% endblock %}
 
 {% block body %}
@@ -8,6 +8,6 @@
     <br><br>
     <br><br>
     <font size="14">PTASZNIKI</font><br><br><br>
-    <a href="/ptaszniki"> <img src="images/ptasznik.png"/></a>
+    <a href="{{path('showPtaszniki')}}"> <img src="images/ptasznik.png"/></a>
 
 {% endblock %}

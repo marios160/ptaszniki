@@ -124,16 +124,15 @@ class PtasznikRepository extends \Doctrine\ORM\EntityRepository {
         return $this->getEntityManager()->createQuery($query)
                         ->getResult();
     }
-    public function findByKodEan($kodEan){
-        $query = "SELECT p FROM AppBundle:Ptasznik p WHERE p.kodEan = '$kodEan'";
-
-
-        return $this->getEntityManager()
-                        ->createQuery($query)
-                        ->setFirstResult(0)
-                        ->setMaxResults(1)
-                ->getSingleResult();
-    }
+//    public function findByKodEan($kodEan){
+//        $query = "SELECT p FROM AppBundle:Ptasznik p WHERE p.kodEan = '$kodEan'";
+//
+//        $qry =  $this->getEntityManager()
+//                        ->createQuery($query)
+//                        ->setFirstResult(0)
+//                        ->setMaxResults(1);
+//         return $qry->getResult();
+//    }
     
     public function findByKodEanRange($kodEan1, $kodEan2){
         $query = "SELECT p FROM AppBundle:Ptasznik p WHERE p.kodEan >= $kodEan1 AND p.kodEan <= $kodEan2";

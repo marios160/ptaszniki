@@ -194,7 +194,7 @@ class ZdarzeniaController extends Controller {
             $zdarzenie = $em->getRepository('AppBundle:Zdarzenie')->find($p['id']);
             $typZdarzenia = $em->getRepository('AppBundle:TypZdarzenia')->find($p['typZdarzenia']);
             $pracownik = $em->getRepository('AppBundle:Pracownik')->find($p['pracownik']);
-            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik']);
+            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik'])[0];
             if (!$ptasznik) {
                 throw $this->createNotFoundException(
                         'No ptasznik found for ean ' . $p['ptasznik']
@@ -221,7 +221,7 @@ class ZdarzeniaController extends Controller {
 
         $p = $request->get('zdarzenie');
 
-            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptasznik'])) {
+            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptasznik']) || empty($p['info'])) {
                 $this->addFlash(
                         'notice', 'Proszę wypełnić wymagane pola!'
                 );
@@ -231,7 +231,7 @@ class ZdarzeniaController extends Controller {
             $typZdarzenia = $em->getRepository('AppBundle:TypZdarzenia')->find($p['typZdarzenia']);
             $pracownik = $em->getRepository('AppBundle:Pracownik')->find($p['pracownik']);
 
-            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik']);
+            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik'])[0];
             if (!$ptasznik) {
                 throw $this->createNotFoundException(
                         'No ptasznik found for ean ' . $p['ptasznik']
@@ -360,7 +360,6 @@ class ZdarzeniaController extends Controller {
     public function addMultiAreaZapiszAction(Request $request) {
         //echo$request->get('zdarzenia') ;
 
-
         $p = $request->get('zdarzenie');
         if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptaszniki'])) {
             $this->addFlash(
@@ -380,7 +379,13 @@ class ZdarzeniaController extends Controller {
         $ptasznik = explode(PHP_EOL, $p['ptaszniki']);
 
         foreach ($ptasznik as $el) {
-            $pt = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($el);
+
+            $pt = $em->getRepository('AppBundle:Ptasznik')->findByKodEan(trim($el))[0];
+            if (!$pt) {
+            throw $this->createNotFoundException(
+                    'No ptasznik found for ean ' . $el
+            );
+        }
             $zdarzenie = new Zdarzenie();
             $zdarzenie->setTypZdarzenia($typZdarzenia);
             $zdarzenie->setPracownik($pracownik);
