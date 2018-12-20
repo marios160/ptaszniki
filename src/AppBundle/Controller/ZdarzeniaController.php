@@ -4,13 +4,9 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Repository\ZdarzenieRepository;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Zdarzenie;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Debug\Debug;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class ZdarzeniaController extends Controller {
 
@@ -73,6 +69,10 @@ class ZdarzeniaController extends Controller {
         // $request->get('chck')
     }
 
+//##########################################################################################
+//                  Przenoszenie do formularzy / pierwsza akcja
+//##########################################################################################
+
     /**
      * @Route("/zdarzenia/delete", name="deleteZdarzenie")
      */
@@ -117,21 +117,21 @@ class ZdarzeniaController extends Controller {
                     'count' => $count));
     }
 
-    /**
-     * @Route("/zdarzenia/edit", name="editZdarzenie")
-     */
-    public function editAction(Request $request) {
-        $zdarzenia = $this->getDoctrine()->
-                        getRepository('AppBundle:Zdarzenie')->findByIds($request->get('chck'));
-        $typZdarzenia = $this->getDoctrine()->
-                        getRepository('AppBundle:TypZdarzenia')->findAll();
-        $pracownik = $this->getDoctrine()->
-                        getRepository('AppBundle:Pracownik')->findAll();
-        return $this->render('@App/Zdarzenia/edit.html.twig', array('zdarzenia' => $zdarzenia,
-                    'typZdarzenia' => $typZdarzenia,
-                    'pracownicy' => $pracownik,
-                    'ptasznik' => $request->get('ptasznik')));
-    }
+//    /**
+//     * @Route("/zdarzenia/edit", name="editZdarzenie")
+//     */
+//    public function editAction(Request $request) {
+//        $zdarzenia = $this->getDoctrine()->
+//                        getRepository('AppBundle:Zdarzenie')->findByIds($request->get('chck'));
+//        $typZdarzenia = $this->getDoctrine()->
+//                        getRepository('AppBundle:TypZdarzenia')->findAll();
+//        $pracownik = $this->getDoctrine()->
+//                        getRepository('AppBundle:Pracownik')->findAll();
+//        return $this->render('@App/Zdarzenia/edit.html.twig', array('zdarzenia' => $zdarzenia,
+//                    'typZdarzenia' => $typZdarzenia,
+//                    'pracownicy' => $pracownik,
+//                    'ptasznik' => $request->get('ptasznik')));
+//    }
 
     /**
      * @Route("/zdarzenia/addMulti", name="addMultiZdarzenie")
@@ -184,34 +184,37 @@ class ZdarzeniaController extends Controller {
         ));
     }
 
-    /**
-     * @Route("/zdarzenia/editZapisz", name="editZapiszZdarzenie")
-     */
-    public function editZapiszAction(Request $request) {
-        //echo$request->get('zdarzenia') ;
-        foreach ($request->get('zdarzeniaEdit') as $p) {
-            $em = $this->getDoctrine()->getManager();
-            $zdarzenie = $em->getRepository('AppBundle:Zdarzenie')->find($p['id']);
-            $typZdarzenia = $em->getRepository('AppBundle:TypZdarzenia')->find($p['typZdarzenia']);
-            $pracownik = $em->getRepository('AppBundle:Pracownik')->find($p['pracownik']);
-            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik'])[0];
-            if (!$ptasznik) {
-                throw $this->createNotFoundException(
-                        'No ptasznik found for ean ' . $p['ptasznik']
-                );
-            }
-            $zdarzenie->setTypZdarzenia($typZdarzenia);
-            $zdarzenie->setPracownik($pracownik);
-            $zdarzenie->setPtasznik($ptasznik[0]);
-            $zdarzenie->setData(new \Datetime($p['data']));
-            $zdarzenie->setOpis($p['opis']);
-            $em->flush();
-        }
-        $this->addFlash(
-                'notice', 'Zapisano zmiany!'
-        );
-        return $this->redirectToRoute('showZdarzenia');
-    }
+//##########################################################################################
+//                  Zapisanie danych / druga akcja
+//##########################################################################################
+//    /**
+//     * @Route("/zdarzenia/editZapisz", name="editZapiszZdarzenie")
+//     */
+//    public function editZapiszAction(Request $request) {
+//        //echo$request->get('zdarzenia') ;
+//        foreach ($request->get('zdarzeniaEdit') as $p) {
+//            $em = $this->getDoctrine()->getManager();
+//            $zdarzenie = $em->getRepository('AppBundle:Zdarzenie')->find($p['id']);
+//            $typZdarzenia = $em->getRepository('AppBundle:TypZdarzenia')->find($p['typZdarzenia']);
+//            $pracownik = $em->getRepository('AppBundle:Pracownik')->find($p['pracownik']);
+//            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik'])[0];
+//            if (!$ptasznik) {
+//                throw $this->createNotFoundException(
+//                        'No ptasznik found for ean ' . $p['ptasznik']
+//                );
+//            }
+//            $zdarzenie->setTypZdarzenia($typZdarzenia);
+//            $zdarzenie->setPracownik($pracownik);
+//            $zdarzenie->setPtasznik($ptasznik[0]);
+//            $zdarzenie->setData(new \Datetime($p['data']));
+//            $zdarzenie->setOpis($p['opis']);
+//            $em->flush();
+//        }
+//        $this->addFlash(
+//                'notice', 'Zapisano zmiany!'
+//        );
+//        return $this->redirectToRoute('showZdarzenia');
+//    }
 
     /**
      * @Route("/zdarzenia/addZapisz", name="addZapiszZdarzenie")
@@ -220,58 +223,39 @@ class ZdarzeniaController extends Controller {
         //echo$request->get('zdarzenia') ;
 
         $p = $request->get('zdarzenie');
-
+        try {
             if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptasznik']) || empty($p['info'])) {
-                $this->addFlash(
-                        'notice', 'Proszę wypełnić wymagane pola!'
-                );
-                return $this->redirectToRoute('addZdarzenie', array('ptasznik' => $p['ptasznik']));
+                throw new Exception('Nie wypełniono wymaganych pól', 21);
             }
             $em = $this->getDoctrine()->getManager();
             $typZdarzenia = $em->getRepository('AppBundle:TypZdarzenia')->find($p['typZdarzenia']);
             $pracownik = $em->getRepository('AppBundle:Pracownik')->find($p['pracownik']);
 
-            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik'])[0];
-            if (!$ptasznik) {
-                throw $this->createNotFoundException(
-                        'No ptasznik found for ean ' . $p['ptasznik']
-                );
+            $pt = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik'])[0];
+            if (!$pt) {
+                throw new Exception('Ptasznik nie istnieje', 22);
             }
             $zdarzenie = new Zdarzenie();
             $zdarzenie->setTypZdarzenia($typZdarzenia);
             $zdarzenie->setPracownik($pracownik);
-            $zdarzenie->setPtasznik($ptasznik);
+            $zdarzenie->setPtasznik($pt);
             $zdarzenie->setData(new \Datetime($p['data']));
             $zdarzenie->setOpis($p['opis']);
             $zdarzenie->setRozmiar("");
-            switch ($p['typZdarzenia']) {
-                case '1':
-                    $karma = $em->getRepository('AppBundle:Karma')->find($p['info']);
-                    $zdarzenie->setKarma($karma);
-                    break;
-                case '2':
-                    $zdarzenie->setRozmiar($p['info']);
-                    $ptasznik->setAktualnyRozmiar($p['info']);
-                    break;
-                case '3':
-                    $magazyn = $em->getRepository('AppBundle:Magazyn')->find($p['info']);
-                    $zdarzenie->setMagazyn($magazyn);
-                    $ptasznik->setMagazyn($magazyn);
-                    break;
-                case '4':
-                    $ptasznik->setAktualnyRozmiar("L1");
-                    break;
-                case '6':
-                    $terrarium = $em->getRepository('AppBundle:Terrarium')->find($p['info']);
-                    $zdarzenie->setTerrarium($terrarium[0]);
-                    $ptasznik->setTerrarium($terrarium[0]);
-                    break;
-                default:
-                    break;
-            }
+            $zdarzenie = self::wykonajZdarzenie($p, $zdarzenie, $pt, $em);
             $em->persist($zdarzenie);
             $em->flush();
-        
+        } catch (Exception $e) {
+            if ($e->getCode() == 22) {
+                $this->addFlash('notice', 'Ptasznik o podanym kodzie EAN (' . $p['ptasznik'] . ') nie istnieje!');
+            } else
+            if ($e->getCode() == 21) {
+                $this->addFlash('notice', 'Nie wypełniono wymaganych pól!');
+            } else {
+                $this->addFlash('notice', $e->getMessage() . "\n\n" . $e->getLine());
+            }
+            return $this->redirectToRoute('addZdarzenie', array('ptasznik' => $p['ptasznik']));
+        }
 
         $this->addFlash(
                 'notice', 'Dodano zdarzenie!'
@@ -287,66 +271,71 @@ class ZdarzeniaController extends Controller {
 
 
         $p = $request->get('zdarzenie');
-        if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptasznik1']) || empty($p['ptasznik2'])) {
-            $this->addFlash(
-                    'notice', 'Proszę wypełnić wymagane pola!'
-            );
-            return $this->redirectToRoute('addMultiZdarzenie', array('ptasznik1' => $p['ptasznik1'], 'ptasznik2' => $p['ptasznik2']));
-        } else if ($p['ptasznik1'] == $p['ptasznik2']) {
-            $this->addFlash(
-                    'notice', 'Jeśli chcesz dodać zdarzenie dla jednego ptasznika, użyj opcji "Dodaj zdarzenie"'
-            );
-            return $this->redirectToRoute('showZdarzenia');
-        }
-        $em = $this->getDoctrine()->getManager();
-        $typZdarzenia = $em->getRepository('AppBundle:TypZdarzenia')->find($p['typZdarzenia']);
-        $pracownik = $em->getRepository('AppBundle:Pracownik')->find($p['pracownik']);
-        $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEanRange($p['ptasznik1'], $p['ptasznik2']);
-        if (!$ptasznik) {
-            $this->addFlash(
-                    'notice', 'Niepoprawny zakres kodów EAN!'
-            );
-            return $this->redirectToRoute('addMultiZdarzenie');
-        }
+        try {
+            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptasznik1']) || empty($p['ptasznik2'])) {
+                throw new Exception('Nie wypełniono wymaganych pól', 21);
+            }
+            if ($p['ptasznik1'] == $p['ptasznik2']) {
+                throw new Exception('Jeden ptasznik', 23);
+            }
+            $em = $this->getDoctrine()->getManager();
+            $pt = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik1'])[0];
+            if (!$pt) {
+                throw new Exception('Ptasznik nie istnieje', 31);
+            }
+            $pt = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['ptasznik2'])[0];
+            if (!$pt) {
+                throw new Exception('Ptasznik nie istnieje', 32);
+            }
 
-        foreach ($ptasznik as $el) {
-            $zdarzenie = new Zdarzenie();
-            $zdarzenie->setTypZdarzenia($typZdarzenia);
-            $zdarzenie->setPracownik($pracownik);
-            $zdarzenie->setPtasznik($el);
-            $zdarzenie->setData(new \Datetime($p['data']));
-            $zdarzenie->setOpis($p['opis']);
-            $zdarzenie->setRozmiar("");
-            switch ($p['typZdarzenia']) {
-                case '1':
-                    $karma = $em->getRepository('AppBundle:Karma')->find($p['info']);
-                    $zdarzenie->setKarma($karma);
-                    break;
-                case '2':
-                    $zdarzenie->setRozmiar($p['info']);
-                    $el->setAktualnyRozmiar($p['info']);
-                    break;
-                case '3':
-                    $magazyn = $em->getRepository('AppBundle:Magazyn')->find($p['info']);
-                    $zdarzenie->setMagazyn($magazyn);
-                    $el->setMagazyn($magazyn);
-                    break;
-                case '4':
-                    $el->setAktualnyRozmiar("L1");
-                    break;
-                case '6':
-                    $terrarium = $em->getRepository('AppBundle:Terrarium')->find($p['info']);
-                    $zdarzenie->setTerrarium($terrarium);
-                    $el->setTerrarium($terrarium);
-                    break;
 
+            $typZdarzenia = $em->getRepository('AppBundle:TypZdarzenia')->find($p['typZdarzenia']);
+            $pracownik = $em->getRepository('AppBundle:Pracownik')->find($p['pracownik']);
+            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEanRange($p['ptasznik1'], $p['ptasznik2']);
+            if (!$ptasznik) {
+                throw new Exception('Niepoprawny zakres kodów EAN', 24);
+            }
+
+            foreach ($ptasznik as $el) {
+                $zdarzenie = new Zdarzenie();
+                $zdarzenie->setTypZdarzenia($typZdarzenia);
+                $zdarzenie->setPracownik($pracownik);
+                $zdarzenie->setPtasznik($el);
+                $zdarzenie->setData(new \Datetime($p['data']));
+                $zdarzenie->setOpis($p['opis']);
+                $zdarzenie->setRozmiar("");
+                $zdarzenie = self::wykonajZdarzenie($p, $zdarzenie, $el, $em);
+                $em->persist($zdarzenie);
+            }
+            $em->flush();
+        } catch (Exception $e) {
+            switch ($e->getCode()) {
+                case 22:
+                    $this->addFlash('notice', 'Ptasznik o podanym kodzie EAN (' . $p['ptasznik'] . ') nie istnieje!');
+                    break;
+                case 31:
+                    $this->addFlash('notice', 'Ptasznik o podanym kodzie EAN (' . $p['ptasznik1'] . ') nie istnieje!');
+                    break;
+                case 32:
+                    $this->addFlash('notice', 'Ptasznik o podanym kodzie EAN (' . $p['ptasznik2'] . ') nie istnieje!');
+                    break;
+                case 21:
+                    $this->addFlash('notice', 'Nie wypełniono wymaganych pól!');
+                    break;
+                case 23:
+                    $this->addFlash('notice', 'Jeśli chcesz dodać zdarzenie dla jednego ptasznika, użyj opcji "Dodaj zdarzenie"');
+                    return $this->redirectToRoute('showZdarzenia');
+                    break;
+                case 24:
+                    $this->addFlash('notice', 'Niepoprawny zakres kodów EAN!');
+                    return $this->redirectToRoute('addMultiZdarzenie');
+                    break;
                 default:
+                    $this->addFlash('notice', $e->getMessage() . "\n\n" . $e->getLine());
                     break;
             }
-            $em->persist($zdarzenie);
+            return $this->redirectToRoute('addMultiZdarzenie', array('ptasznik1' => $p['ptasznik1'], 'ptasznik2' => $p['ptasznik2']));
         }
-        $em->flush();
-
 
         $this->addFlash(
                 'notice', 'Dodano Zdarzenie!'
@@ -361,73 +350,86 @@ class ZdarzeniaController extends Controller {
         //echo$request->get('zdarzenia') ;
 
         $p = $request->get('zdarzenie');
-        if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptaszniki'])) {
-            $this->addFlash(
-                    'notice', 'Proszę wypełnić wymagane pola!'
-            );
-            return $this->redirectToRoute('addMultiAreaZdarzenie', array('ptaszniki' => $p['ptaszniki']));
-        }
-        $em = $this->getDoctrine()->getManager();
-        $typZdarzenia = $em->getRepository('AppBundle:TypZdarzenia')->find($p['typZdarzenia']);
-        $pracownik = $em->getRepository('AppBundle:Pracownik')->find($p['pracownik']);
-//        $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEanRange($p['ptasznik1'], $p['ptasznik2']);
-//        if (!$ptasznik) {
-//            throw $this->createNotFoundException(
-//                    'No ptasznik found for ean ' . $p['ptasznik1'] . " - " . $p['ptasznik2']
-//            );
-//        }
-        $ptasznik = explode(PHP_EOL, $p['ptaszniki']);
+        try {
+            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptaszniki'])) {
+                throw new Exception('Nie wypełniono wymaganych pól', 21);
+            }
+            $em = $this->getDoctrine()->getManager();
+            $typZdarzenia = $em->getRepository('AppBundle:TypZdarzenia')->find($p['typZdarzenia']);
+            $pracownik = $em->getRepository('AppBundle:Pracownik')->find($p['pracownik']);
+            $ptasznik = explode(PHP_EOL, $p['ptaszniki']);
 
-        foreach ($ptasznik as $el) {
+            foreach ($ptasznik as $el) {
 
-            $pt = $em->getRepository('AppBundle:Ptasznik')->findByKodEan(trim($el))[0];
-            if (!$pt) {
-            throw $this->createNotFoundException(
-                    'No ptasznik found for ean ' . $el
-            );
-        }
-            $zdarzenie = new Zdarzenie();
-            $zdarzenie->setTypZdarzenia($typZdarzenia);
-            $zdarzenie->setPracownik($pracownik);
-            $zdarzenie->setPtasznik($pt);
-            $zdarzenie->setData(new \Datetime($p['data']));
-            $zdarzenie->setOpis($p['opis']);
-            $zdarzenie->setRozmiar("");
-            switch ($p['typZdarzenia']) {
-                case '1':
-                    $karma = $em->getRepository('AppBundle:Karma')->find($p['info']);
-                    $zdarzenie->setKarma($karma);
+                $pt = $em->getRepository('AppBundle:Ptasznik')->findByKodEan(trim($el))[0];
+                if (!$pt) {
+                    throw new Exception('Ptasznik nie istnieje', 33);
+                }
+                $zdarzenie = new Zdarzenie();
+                $zdarzenie->setTypZdarzenia($typZdarzenia);
+                $zdarzenie->setPracownik($pracownik);
+                $zdarzenie->setPtasznik($pt);
+                $zdarzenie->setData(new \Datetime($p['data']));
+                $zdarzenie->setOpis($p['opis']);
+                $zdarzenie->setRozmiar("");
+                $zdarzenie = self::wykonajZdarzenie($p, $zdarzenie, $pt, $em);
+                $em->persist($zdarzenie);
+            }
+            $em->flush();
+        } catch (Exception $e) {
+            switch ($e->getCode()) {
+                case 22:
+                    $this->addFlash('notice', 'Ptasznik o podanym kodzie EAN (' . $p['ptasznik'] . ') nie istnieje!');
                     break;
-                case '2':
-                    $zdarzenie->setRozmiar($p['info']);
-                    $pt->setAktualnyRozmiar($p['info']);
+                case 33:
+                    $this->addFlash('notice', 'Jeden z podanych ptaszników o danym kodzie EAN nie istnieje!');
                     break;
-                case '3':
-                    $magazyn = $em->getRepository('AppBundle:Magazyn')->find($p['info']);
-                    $zdarzenie->setMagazyn($magazyn);
-                    $pt->setMagazyn($magazyn);
+                case 21:
+                    $this->addFlash('notice', 'Nie wypełniono wymaganych pól!');
                     break;
-                case '4':
-                    $pt->setAktualnyRozmiar("L1");
-                    break;
-                case '6':
-                    $terrarium = $em->getRepository('AppBundle:Terrarium')->find($p['info']);
-                    $zdarzenie->setTerrarium($terrarium);
-                    $pt->setTerrarium($terrarium);
-                    break;
-
                 default:
+                    $this->addFlash('notice', $e->getMessage() . "\n\n" . $e->getLine());
                     break;
             }
-            $em->persist($zdarzenie);
+            return $this->redirectToRoute('addMultiAreaZdarzenie', array('ptaszniki' => $p['ptaszniki']));
         }
-        $em->flush();
-
-
         $this->addFlash(
                 'notice', 'Dodano Zdarzenie!'
         );
         return $this->redirectToRoute('showZdarzenia');
+    }
+
+    public static function wykonajZdarzenie($p, $zdarzenie, $pt, $em) {
+        switch ($p['typZdarzenia']) {
+            case '1':
+                $karma = $em->getRepository('AppBundle:Karma')->find($p['info']);
+                $zdarzenie->setKarma($karma);
+                break;
+            case '2':
+                $zdarzenie->setRozmiar($p['info']);
+                $pt->setAktualnyRozmiar($p['info']);
+                break;
+            case '3':
+                $magazyn = $em->getRepository('AppBundle:Magazyn')->find($p['info']);
+                $zdarzenie->setMagazyn($magazyn);
+                $pt->setMagazyn($magazyn);
+                break;
+            case '4':
+                $pt->setAktualnyRozmiar("L1");
+                break;
+            case '5':
+                $pt->setUwagi("---ZDECHŁ---\n" . $pt->getUwagi());
+                break;
+            case '6':
+                $terrarium = $em->getRepository('AppBundle:Terrarium')->find($p['info']);
+                $zdarzenie->setTerrarium($terrarium);
+                $pt->setTerrarium($terrarium);
+                break;
+
+            default:
+                break;
+        }
+        return $zdarzenie;
     }
 
 }

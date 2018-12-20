@@ -23,8 +23,8 @@
 
                 <tr>
                     <td>
-                        <select  name="zdarzenie[typZdarzenia]"  onload="dodajPole(value)">
-                            <option id="selTypZdarzenia" value="" selected></option>
+                        <select  name="zdarzenie[typZdarzenia]"  onChange="dodajPole(value)">
+                            <option value="" selected></option>
                             {% for typ in typZdarzenia %}
                                 <option value="{{typ.id}}" >{{typ.nazwa}}</option>
                             {% endfor %}

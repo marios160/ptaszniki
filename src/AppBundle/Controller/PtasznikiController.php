@@ -4,13 +4,10 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Repository\PtasznikRepository;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Form\PtasznikType;
 use AppBundle\Entity\Ptasznik;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Config\Definition\Exception\Exception;
+
 
 class PtasznikiController extends Controller {
 
@@ -108,7 +105,7 @@ class PtasznikiController extends Controller {
     public function deleteAction(Request $request) {
         foreach ($request->get('chck') as $chck) {
             $em = $this->getDoctrine()->getManager();
-            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($chck);
+            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($chck)[0];
             $em->remove($ptasznik);
             $em->flush();
         }
@@ -170,16 +167,22 @@ class PtasznikiController extends Controller {
      */
     public function editZapiszAction(Request $request) {
         //echo$request->get('ptaszniki') ;
+        try{
         foreach ($request->get('ptasznikiEdit') as $p) {
             $em = $this->getDoctrine()->getManager();
+            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['kodEan'])[0];
+            if($ptasznik){
+                if($ptasznik->getId() != $p['id']){
+                    throw new Exception('Ptasznik już istnieje', 20);
+                }            
+            }
+            if(empty(trim($p['kodEan'])) || empty(trim($p['nazwaLacinska']))){
+                throw new Exception('Nie wypełniono wymaganych pól',21);
+            }
+            
             $ptasznik = $em->getRepository('AppBundle:Ptasznik')->find($p['id']);
             $magazyn = $em->getRepository('AppBundle:Magazyn')->find($p['magazyn']);
             $terrarium = $em->getRepository('AppBundle:Terrarium')->find($p['terrarium']);
-            if (!$ptasznik) {
-                throw $this->createNotFoundException(
-                        'No ptasznik found for id ' . $id
-                );
-            }
             $ptasznik->setKodEan($p['kodEan']);
             $ptasznik->setNazwaLacinska($p['nazwaLacinska']);
             $ptasznik->setNazwaPolska($p['nazwaPolska']);
@@ -193,6 +196,17 @@ class PtasznikiController extends Controller {
             $ptasznik->setLpWPartii($p['lpWPartii']);
             $ptasznik->setWydrukEtykiety($p['wydrukEtykiety']);
             $em->flush();
+        }
+        } catch(Exception $e){
+            if($e->getCode() == 20){
+                $this->addFlash('notice', 'Ptasznik o podanym kodzie EAN ('.$p['kodEan'].') już istnieje!');
+            }else
+            if($e->getCode() == 21){
+                $this->addFlash('notice', 'Nie wypełniono wymaganych pól!');
+            }else{
+                $this->addFlash('notice', $e->getMessage()."\n\n".$e->getLine());
+            }
+            return $this->redirectToRoute('showPtaszniki');
         }
         $this->addFlash(
                 'notice', 'Zapisano zmiany!'
@@ -210,6 +224,11 @@ class PtasznikiController extends Controller {
 
         try {
             $em = $this->getDoctrine()->getManager();
+            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['kodEan'])[0];
+            if ($ptasznik){
+                throw new Exception('Ptasznik już istnieje',20);
+            }
+            
             $magazyn = $em->getRepository('AppBundle:Magazyn')->find($p['magazyn']);
             $terrarium = $em->getRepository('AppBundle:Terrarium')->find($p['terrarium']);
             $ptasznik = new Ptasznik();
@@ -230,21 +249,21 @@ class PtasznikiController extends Controller {
             $errors = $validator->validate($ptasznik);
 
             if (count($errors) > 0) {
-                $this->addFlash(
-                        'notice', 'Proszę wypełnić wymagane pola!'
-                );
-                return $this->redirectToRoute('addPtasznik');
+                throw new Exception('Nie wypełniono wymaganych pól',21);
             }
 
             $em->persist($ptasznik);
             $em->flush();
-        } catch (PDOException $e) {
-            if ($e->getCode() == 23000) {
-                $this->addFlash(
-                        'notice', 'Ptasznik o podanym kodzie EAN (' + $p['kodEan'] + ') już istnieje!'
-                );
-                return $this->redirectToRoute('addPtasznik');
+        } catch (Exception $e) {
+            if($e->getCode() == 20){
+                $this->addFlash('notice', 'Ptasznik o podanym kodzie EAN ('.$p['kodEan'].') już istnieje!');
+            }else
+            if($e->getCode() == 21){
+                $this->addFlash('notice', 'Nie wypełniono wymaganych pól!');
+            }else{
+                $this->addFlash('notice', $e->getMessage()."\n\n".$e->getLine());
             }
+            return $this->redirectToRoute('addPtasznik');
         }
 
         $this->addFlash(
