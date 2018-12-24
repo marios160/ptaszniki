@@ -228,7 +228,7 @@ class ZdarzeniaController extends Controller {
 
         $p = $request->get('zdarzenie');
         try {
-            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptasznik']) || empty($p['info'])) {
+            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptasznik']) || empty(trim($p['info']))) {
                 throw new Exception('Nie wypełniono wymaganych pól', 21);
             }
             $em = $this->getDoctrine()->getManager();
@@ -276,7 +276,7 @@ class ZdarzeniaController extends Controller {
 
         $p = $request->get('zdarzenie');
         try {
-            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptasznik1']) || empty($p['ptasznik2'])) {
+            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptasznik1']) || empty($p['ptasznik2']) || empty(trim($p['info']))) {
                 throw new Exception('Nie wypełniono wymaganych pól', 21);
             }
             if ($p['ptasznik1'] == $p['ptasznik2']) {
@@ -355,7 +355,7 @@ class ZdarzeniaController extends Controller {
 
         $p = $request->get('zdarzenie');
         try {
-            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptaszniki'])) {
+            if (empty($p['typZdarzenia']) || empty($p['pracownik']) || empty($p['ptaszniki']) || empty(trim($p['info']))) {
                 throw new Exception('Nie wypełniono wymaganych pól', 21);
             }
             $em = $this->getDoctrine()->getManager();

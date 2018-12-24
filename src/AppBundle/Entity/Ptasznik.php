@@ -75,7 +75,7 @@ class Ptasznik {
      protected $zakupRozmiar;
      
      /**
-      * @ORM\Column(name="plec", type="string", length=20)
+      * @ORM\Column(name="plec", type="string", length=50)
       */
      protected $plec;
      

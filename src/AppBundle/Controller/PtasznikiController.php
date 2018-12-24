@@ -173,15 +173,15 @@ class PtasznikiController extends Controller {
         //echo$request->get('ptaszniki') ;
         try{
         foreach ($request->get('ptasznikiEdit') as $p) {
+            if(empty(trim(preg_replace("/[^0-9\.]/", '', $p['kodEan']))) || empty(trim($p['nazwaLacinska']))){
+                throw new Exception('Nie wypełniono wymaganych pól',21);
+            }
             $em = $this->getDoctrine()->getManager();
             $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['kodEan'])[0];
             if($ptasznik){
                 if($ptasznik->getId() != $p['id']){
                     throw new Exception('Ptasznik już istnieje', 20);
                 }            
-            }
-            if(empty(trim($p['kodEan'])) || empty(trim($p['nazwaLacinska']))){
-                throw new Exception('Nie wypełniono wymaganych pól',21);
             }
             
             $ptasznik = $em->getRepository('AppBundle:Ptasznik')->find($p['id']);
@@ -227,8 +227,11 @@ class PtasznikiController extends Controller {
         $p = $request->get('ptasznik');
 
         try {
+            if(strlen(preg_replace("/[^0-9\.]/", '', $p['kodEan'])) < strlen($p['kodEan'])){
+                throw new Exception('Błędny kod EAN',29);
+            }
             $em = $this->getDoctrine()->getManager();
-            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan($p['kodEan'])[0];
+            $ptasznik = $em->getRepository('AppBundle:Ptasznik')->findByKodEan(trim(preg_replace("/[^0-9\.]/", '', $p['kodEan'])))[0];
             if ($ptasznik){
                 throw new Exception('Ptasznik już istnieje',20);
             }
@@ -236,7 +239,7 @@ class PtasznikiController extends Controller {
             $magazyn = $em->getRepository('AppBundle:Magazyn')->find($p['magazyn']);
             $terrarium = $em->getRepository('AppBundle:Terrarium')->find($p['terrarium']);
             $ptasznik = new Ptasznik();
-            $ptasznik->setKodEan($p['kodEan']);
+            $ptasznik->setKodEan(trim(preg_replace("/[^0-9\.]/", '', $p['kodEan'])));
             $ptasznik->setNazwaLacinska($p['nazwaLacinska']);
             $ptasznik->setNazwaPolska($p['nazwaPolska']);
             $ptasznik->setUwagi($p['uwagi']);
@@ -264,6 +267,9 @@ class PtasznikiController extends Controller {
             }else
             if($e->getCode() == 21){
                 $this->addFlash('notice', 'Nie wypełniono wymaganych pól!');
+            }else 
+            if($e->getCode() == 29){
+                $this->addFlash('notice', 'Kod EAN musi się składać wyłącznie z cyfr!');
             }else{
                 $this->addFlash('notice', $e->getMessage()."\n\n".$e->getLine());
             }

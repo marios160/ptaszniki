@@ -3,6 +3,8 @@ body {
     font-family: "Lato", sans-serif;
     color: white;
     text-align: center;
+    margin-bottom: 100px;
+    min-height: 100%;
 }
 
 footer {
